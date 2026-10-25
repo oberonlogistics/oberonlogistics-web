@@ -17,7 +17,8 @@ concurrency:
 
 jobs:
   review:
-    # Fork PRs never get the base repository's secrets. A draft is still being worked on,
+    # pull_request_target would hand fork PRs the secrets, so they are skipped: dev work is pushed
+    # to branches in this repository. A draft is still being worked on,
     # so marking it ready for review is what starts the review.
     if: github.event.pull_request.head.repo.full_name == github.repository && !github.event.pull_request.draft
     runs-on: ubuntu-24.04
