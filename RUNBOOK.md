@@ -20,11 +20,7 @@ A merge to `main` runs [`.github/workflows/firebase-hosting-merge.yml`](.github/
 
 A pull request opened in this repo gets a preview channel from [`.github/workflows/firebase-hosting-pull-request.yml`](.github/workflows/firebase-hosting-pull-request.yml). The workflow skips a pull request whose head branch is on a fork, so fork PRs get no checks and no preview. Push branches to `oberonlogistics/oberonlogistics-web` itself, not to a fork.
 
-Merge check, on the current head SHA:
-
-1. PM sign-off and CTO sign-off on that SHA.
-2. CI green on that SHA, including the preview deploy. "No checks reported" is not green.
-3. Health check passes against the preview channel URL the Action posts on the PR.
+Merge check: the [Shippability Bar in CLAUDE.md](CLAUDE.md#shippability-bar), on the current head SHA. In short: CI green including the preview deploy ("no checks reported" is not green), Bugbot `APPROVED` on that SHA, and the health check below passing against the preview channel URL the Action posts on the PR. A PR that meets it is merged by its author; a PR on the bar's escalation list also needs PM and CTO sign-off on that SHA.
 
 No manual `firebase deploy`.
 
@@ -109,7 +105,7 @@ git revert --no-edit SHA
 git push -u origin HEAD
 ```
 
-Open that branch against `main`. Health-check its preview URL. PM and CTO sign off on the revert head SHA. CI must be green. After the merge, the Hosting Action redeploys. Re-run the health check against production.
+Open that branch against `main`. It goes through the same merge check as any PR: CI green, Bugbot approval and a passing health check on its preview URL, all on the revert head SHA. After the merge, the Hosting Action redeploys. Re-run the health check against production.
 
 ### Emergency
 
