@@ -10,7 +10,7 @@ Production:
 - https://www.oberonlogistics.com (301 → apex)
 - https://oberonlogistics-web.web.app
 
-Lead form backend: the `processFormLead` Cloud Function in a **separate** Firebase project, `oberonlogistics-2a5d9` (URL hardcoded in [`public/js/contactform.js`](public/js/contactform.js)). This runbook does not deploy or roll it back; a Hosting rollback cannot fix a broken backend.
+Lead forms: no backend. [`public/js/contactform.js`](public/js/contactform.js) opens a `mailto:` draft to info@ or recruiting@ plus a `tel:` link; nothing is posted (Pass A of #3). The old `processFormLead` Cloud Function in project `oberonlogistics-2a5d9` is dead (404) and out of scope for this runbook.
 
 Incident owner: Ollie (PM, Oberon Logistics).
 
@@ -43,22 +43,23 @@ gh run list \
 
 Wait until `status` is `completed` and `conclusion` is `success` (or use `gh run watch <run-id>`).
 
-Then run the page checks. Paste the whole block: it runs in a child `bash`, so a failure does not close your terminal. It reports every failure and exits non-zero if any check failed. Pass a preview channel URL as the argument to check a PR before merge; with no argument it checks production.
+Then run the page checks. Paste the whole block: it runs in a child `bash`, so a failure does not close your terminal. It reports every failure and exits non-zero if any check failed. As written it checks production. To check a PR preview before merge, put the preview channel URL after `--` on the first line (e.g. `bash -s -- https://oberonlogistics-web--pr-N-xxxx.web.app <<'EOF'`). It never reads `BASE` or any other variable from your shell.
 
 ```bash
-bash -s -- "${BASE:-}" <<'EOF'
+bash -s -- <<'EOF'
 base="${1:-https://oberonlogistics.com}"
 fails=0
 
 fail() { echo "FAIL $*" >&2; fails=$((fails + 1)); }
 
-# 200 and the page body contains the needle (the needles are page titles).
+# 200, the body contains the needle, and (if given) does not contain the forbidden string.
 check() {
-  local url="$1" needle="$2" body code
+  local url="$1" needle="$2" forbidden="${3:-}" body code
   body=$(curl -sS --max-time 20 -w '\n%{http_code}' "$url") || { fail "$url curl error"; return; }
   code="${body##*$'\n'}"
   [[ "$code" == "200" ]] || { fail "$url HTTP $code"; return; }
   grep -F -q -- "$needle" <<<"$body" || { fail "$url missing: $needle"; return; }
+  [[ -z "$forbidden" ]] || ! grep -F -q -- "$forbidden" <<<"$body" || { fail "$url contains: $forbidden"; return; }
   echo "OK   $url"
 }
 
@@ -74,8 +75,8 @@ check "$base/" "Landstar BCO - Oberon Logistics"
 check "$base/jobs.html" "Careers | Oberon Logistics"
 check "$base/carriers/" "Oberon Logistics - Carriers"
 redirect "$base/carriers" "$base/carriers/"
-# Lead form wiring: the handler must still point at the oberonlogistics-2a5d9 backend.
-check "$base/js/contactform.js" "oberonlogistics-2a5d9.cloudfunctions.net/api/leads"
+# Lead form handler: mailto hand-off, no call to the dead Cloud Function.
+check "$base/js/contactform.js" "info@oberonlogistics.com" "cloudfunctions.net"
 
 if [[ "$base" == "https://oberonlogistics.com" ]]; then
   redirect "https://www.oberonlogistics.com/" "https://oberonlogistics.com/"
@@ -90,8 +91,6 @@ echo "$fails failure(s)"
 exit $((fails > 0))
 EOF
 ```
-
-To check a preview: `BASE=https://oberonlogistics-web--pr-N-xxxx.web.app` before pasting the block.
 
 ## Rollback
 
