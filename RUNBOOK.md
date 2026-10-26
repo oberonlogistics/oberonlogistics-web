@@ -70,6 +70,20 @@ redirect() {
   echo "OK   $url -> $want"
 }
 
+# Philo answers a CORS preflight from this origin for the intake URL the deployed JS posts to.
+intake_preflight() {
+  local js url headers
+  js=$(curl -sS --max-time 20 "$base/js/driverleadform.js") || { fail "intake JS curl error"; return; }
+  url=$(grep -o 'https://philo.oberonlogistics.com/api/intake/[0-9a-f]*' <<<"$js" | head -n 1)
+  [[ -n "$url" ]] || { fail "driverleadform.js has no Philo intake URL"; return; }
+  headers=$(curl -sS --max-time 20 -o /dev/null -D - -X OPTIONS \
+    -H "Origin: $base" -H "Access-Control-Request-Method: POST" \
+    -H "Access-Control-Request-Headers: content-type" "$url" | tr -d '\r') || { fail "intake preflight curl error"; return; }
+  grep -q '^HTTP/[0-9.]* 204' <<<"$headers" || { fail "intake preflight not 204"; return; }
+  grep -qix "access-control-allow-origin: $base" <<<"$headers" || { fail "intake preflight does not allow $base"; return; }
+  echo "OK   Philo intake preflight from $base"
+}
+
 check "$base/" "Landstar BCO - Oberon Logistics"
 check "$base/jobs.html" "Careers | Oberon Logistics"
 check "$base/carriers/" "Oberon Logistics - Carriers"
@@ -79,15 +93,15 @@ check "$base/js/contactform.js" "info@oberonlogistics.com" "cloudfunctions.net"
 # Recruiting forms: Philo intake handler, loaded by the Careers page.
 check "$base/js/driverleadform.js" "philo.oberonlogistics.com/api/intake/"
 check "$base/jobs.html" "driverleadform.js"
+check "$base/jobs/" "CDL-A Company Driver: Dedicated Regional out of Atlanta"
+check "$base/jobs/" "driverleadform.js"
+redirect "$base/jobs" "$base/jobs/"
+intake_preflight
 
 if [[ "$base" == "https://oberonlogistics.com" ]]; then
   redirect "https://www.oberonlogistics.com/" "https://oberonlogistics.com/"
   check "https://oberonlogistics-web.web.app/" "Landstar BCO - Oberon Logistics"
 fi
-
-# After /jobs/ ships, uncomment and set the shipped job title:
-# check "$base/jobs/" "the shipped job title"
-# redirect "$base/jobs" "$base/jobs/"
 
 echo "$fails failure(s)"
 exit $((fails > 0))
