@@ -13,7 +13,7 @@ Production:
 Lead forms:
 
 - General contact (home page, `/carriers/`): no backend. [`public/js/contactform.js`](public/js/contactform.js) opens a `mailto:` draft to info@ plus a `tel:` link; nothing is posted (Pass A of #3).
-- Recruiting (the `/jobs/` application and the Careers form on `/jobs.html`): [`public/js/driverleadform.js`](public/js/driverleadform.js) posts JSON to `INTAKE_URL`, the Philo intake form of funnel "CDL-A Company Driver" (#18). The body is one flat object: Philo maps `name`, `email` and `phone` to the lead's contact columns and keeps every other key (the answers and `source_form`) in the lead's `fields`. Only a 2xx answer shows a thank-you. `LEADS_ENABLED = false` in that file turns both forms back into local validation with nothing sent. The form key is a public routing ID, not a credential; if it is abused, rotate it in Philo and update the constant. The old `processFormLead` Cloud Function in project `oberonlogistics-2a5d9` is dead (404) and out of scope for this runbook.
+- Recruiting (the application on each `/jobs/<slug>/` posting and the Careers form on `/jobs.html`): [`public/js/driverleadform.js`](public/js/driverleadform.js) posts JSON to `INTAKE_URL`, the Philo intake form of funnel "CDL-A Company Driver" (#18). The body is one flat object: Philo maps `name`, `email` and `phone` to the lead's contact columns and keeps every other key (the answers and `source_form`) in the lead's `fields`. Only a 2xx answer shows a thank-you. `LEADS_ENABLED = false` in that file turns both forms back into local validation with nothing sent. The form key is a public routing ID, not a credential; if it is abused, rotate it in Philo and update the constant. The old `processFormLead` Cloud Function in project `oberonlogistics-2a5d9` is dead (404) and out of scope for this runbook.
 
 Incident owner: Ollie (PM, Oberon Logistics).
 
@@ -93,15 +93,19 @@ check "$base/js/contactform.js" "info@oberonlogistics.com" "cloudfunctions.net"
 # Recruiting forms: Philo intake handler, loaded by the Careers page.
 check "$base/js/driverleadform.js" "philo.oberonlogistics.com/api/intake/"
 check "$base/jobs.html" "driverleadform.js"
-check "$base/jobs/" "CDL-A Company Driver: Dedicated Regional out of Atlanta"
-check "$base/jobs/" "driverleadform.js"
-redirect "$base/jobs" "$base/jobs/"
 intake_preflight
 
 if [[ "$base" == "https://oberonlogistics.com" ]]; then
   redirect "https://www.oberonlogistics.com/" "https://oberonlogistics.com/"
   check "https://oberonlogistics-web.web.app/" "Landstar BCO - Oberon Logistics"
 fi
+
+check "$base/jobs.html" "./jobs/cdl-a-dedicated-regional-atlanta/"
+check "$base/jobs/" "Open Positions | Oberon Logistics"
+redirect "$base/jobs" "$base/jobs/"
+check "$base/jobs/cdl-a-dedicated-regional-atlanta/" "CDL-A Company Driver: Dedicated Regional out of Atlanta"
+check "$base/jobs/cdl-a-dedicated-regional-atlanta/" "driverleadform.js"
+redirect "$base/jobs/cdl-a-dedicated-regional-atlanta" "$base/jobs/cdl-a-dedicated-regional-atlanta/"
 
 echo "$fails failure(s)"
 exit $((fails > 0))

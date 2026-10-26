@@ -1,7 +1,8 @@
 'use strict';
 
-// Recruiting forms (the /jobs/ application and the Careers inquiry) post to
-// Philo intake. With the flag off, submit validates locally and sends nothing.
+// Recruiting forms (the application on each /jobs/<slug>/ posting and the
+// Careers inquiry) post to Philo intake. With the flag off, submit validates
+// locally and sends nothing.
 (function () {
   const LEADS_ENABLED = true;
   const INTAKE_URL = 'https://philo.oberonlogistics.com/api/intake/185cb5e8b9d518811e281e320036b771705d2d4c33655703';
