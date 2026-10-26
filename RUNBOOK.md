@@ -13,7 +13,7 @@ Production:
 Lead forms:
 
 - General contact (home page, `/carriers/`): no backend. [`public/js/contactform.js`](public/js/contactform.js) opens a `mailto:` draft to info@ plus a `tel:` link; nothing is posted (Pass A of #3).
-- Recruiting (the `/jobs/` application and the Careers form on `/jobs.html`): [`public/js/driverleadform.js`](public/js/driverleadform.js) posts JSON to `INTAKE_URL`, the Philo intake form of funnel "CDL-A Company Driver" (#18). Only a 2xx answer shows a thank-you. `LEADS_ENABLED = false` in that file turns both forms back into local validation with nothing sent. The form key is a public routing ID, not a credential; if it is abused, rotate it in Philo and update the constant. The old `processFormLead` Cloud Function in project `oberonlogistics-2a5d9` is dead (404) and out of scope for this runbook.
+- Recruiting (the `/jobs/` application and the Careers form on `/jobs.html`): [`public/js/driverleadform.js`](public/js/driverleadform.js) posts JSON to `INTAKE_URL`, the Philo intake form of funnel "CDL-A Company Driver" (#18). The body is one flat object: Philo maps `name`, `email` and `phone` to the lead's contact columns and keeps every other key (the answers and `source_form`) in the lead's `fields`. Only a 2xx answer shows a thank-you. `LEADS_ENABLED = false` in that file turns both forms back into local validation with nothing sent. The form key is a public routing ID, not a credential; if it is abused, rotate it in Philo and update the constant. The old `processFormLead` Cloud Function in project `oberonlogistics-2a5d9` is dead (404) and out of scope for this runbook.
 
 Incident owner: Ollie (PM, Oberon Logistics).
 

@@ -54,6 +54,9 @@
     return 'Missing answer: ' + label + (/\?$/.test(label) ? '' : '.');
   }
 
+  // Flat on purpose: Philo maps name/email/phone to columns and files every
+  // other top-level key under the lead's `fields` itself. Nesting a `fields`
+  // key here would store the answers one level too deep.
   function readPayload(form) {
     var payload = {};
     Array.prototype.forEach.call(form.elements, function (input) {
