@@ -10,7 +10,10 @@ Production:
 - https://www.oberonlogistics.com (301 → apex)
 - https://oberonlogistics-web.web.app
 
-Lead forms: no backend. [`public/js/contactform.js`](public/js/contactform.js) opens a `mailto:` draft to info@ or recruiting@ plus a `tel:` link; nothing is posted (Pass A of #3). The old `processFormLead` Cloud Function in project `oberonlogistics-2a5d9` is dead (404) and out of scope for this runbook.
+Lead forms:
+
+- General contact (home page, `/carriers/`): no backend. [`public/js/contactform.js`](public/js/contactform.js) opens a `mailto:` draft to info@ plus a `tel:` link; nothing is posted (Pass A of #3).
+- Recruiting (the `/jobs/` application and the Careers form on `/jobs.html`): [`public/js/driverleadform.js`](public/js/driverleadform.js) posts JSON to `INTAKE_URL`, the Philo intake form of funnel "CDL-A Company Driver" (#18). Only a 2xx answer shows a thank-you. `LEADS_ENABLED = false` in that file turns both forms back into local validation with nothing sent. The form key is a public routing ID, not a credential; if it is abused, rotate it in Philo and update the constant. The old `processFormLead` Cloud Function in project `oberonlogistics-2a5d9` is dead (404) and out of scope for this runbook.
 
 Incident owner: Ollie (PM, Oberon Logistics).
 
@@ -73,6 +76,9 @@ check "$base/carriers/" "Oberon Logistics - Carriers"
 redirect "$base/carriers" "$base/carriers/"
 # Lead form handler: mailto hand-off, no call to the dead Cloud Function.
 check "$base/js/contactform.js" "info@oberonlogistics.com" "cloudfunctions.net"
+# Recruiting forms: Philo intake handler, loaded by the Careers page.
+check "$base/js/driverleadform.js" "philo.oberonlogistics.com/api/intake/"
+check "$base/jobs.html" "driverleadform.js"
 
 if [[ "$base" == "https://oberonlogistics.com" ]]; then
   redirect "https://www.oberonlogistics.com/" "https://oberonlogistics.com/"
