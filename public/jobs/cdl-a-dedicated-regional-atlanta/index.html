@@ -103,30 +103,139 @@
     <div class="row justify-content-center">
       <div class="col-lg-8">
         <div class="card bg-light text-dark p-4">
-          <p class="alert alert-warning mb-4">
-            Applications are not open on this page yet. To apply now, email
-            <a class="text-dark text-decoration-underline" href="mailto:recruiting@oberonlogistics.com">recruiting@oberonlogistics.com</a>
-            or call <a class="text-dark text-decoration-underline" href="tel:+13072228150">+1 (307) 222-8150</a>.
-          </p>
-          <form id="form-driver-lead" novalidate>
+          <h2 class="h4 text-dark">Apply</h2>
+          <p class="mb-4">All questions are required. Do not include your SSN, CDL number, or date of birth.</p>
+          <form id="form-driver-lead" method="post" data-intake-form novalidate>
+            <input type="hidden" name="source_form" value="CDL-A Company Driver: Dedicated Regional out of Atlanta">
             <div class="mb-3">
-              <label class="form-label" for="driver-name">Name</label>
-              <input id="driver-name" type="text" class="form-control" name="name" autocomplete="name" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label" for="driver-phone">Phone</label>
-              <input id="driver-phone" type="tel" class="form-control" name="phone" autocomplete="tel" required>
+              <label class="form-label" for="driver-name">Full name</label>
+              <input id="driver-name" type="text" class="form-control" name="name" autocomplete="name" data-label="Full name" required>
             </div>
             <div class="mb-3">
               <label class="form-label" for="driver-email">Email</label>
-              <input id="driver-email" type="email" class="form-control" name="email" autocomplete="email">
+              <input id="driver-email" type="email" class="form-control" name="email" autocomplete="email" data-label="Email" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="driver-phone">Phone</label>
+              <input id="driver-phone" type="tel" class="form-control" name="phone" autocomplete="tel" data-label="Phone" required>
+            </div>
+            <fieldset class="mb-3">
+              <legend class="form-label fs-6">Are you at least 23 years old?</legend>
+              <div class="form-check form-check-inline">
+                <input id="driver-age_23_plus-yes" class="form-check-input" type="radio" name="age_23_plus" value="Yes" data-label="Are you at least 23 years old?" required>
+                <label class="form-check-label" for="driver-age_23_plus-yes">Yes</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input id="driver-age_23_plus-no" class="form-check-input" type="radio" name="age_23_plus" value="No" required>
+                <label class="form-check-label" for="driver-age_23_plus-no">No</label>
+              </div>
+            </fieldset>
+            <fieldset class="mb-3">
+              <legend class="form-label fs-6">Do you hold a valid Class A CDL?</legend>
+              <div class="form-check form-check-inline">
+                <input id="driver-class_a_cdl-yes" class="form-check-input" type="radio" name="class_a_cdl" value="Yes" data-label="Do you hold a valid Class A CDL?" required>
+                <label class="form-check-label" for="driver-class_a_cdl-yes">Yes</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input id="driver-class_a_cdl-no" class="form-check-input" type="radio" name="class_a_cdl" value="No" required>
+                <label class="form-check-label" for="driver-class_a_cdl-no">No</label>
+              </div>
+            </fieldset>
+            <fieldset class="mb-3">
+              <legend class="form-label fs-6">Do you currently hold a hazmat (H or X) endorsement?</legend>
+              <div class="form-check form-check-inline">
+                <input id="driver-hazmat_endorsement-yes" class="form-check-input" type="radio" name="hazmat_endorsement" value="Yes" data-label="Do you currently hold a hazmat (H or X) endorsement?" required>
+                <label class="form-check-label" for="driver-hazmat_endorsement-yes">Yes</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input id="driver-hazmat_endorsement-no" class="form-check-input" type="radio" name="hazmat_endorsement" value="No" required>
+                <label class="form-check-label" for="driver-hazmat_endorsement-no">No</label>
+              </div>
+            </fieldset>
+            <fieldset class="mb-3">
+              <legend class="form-label fs-6">Do you have at least 12 months of OTR experience in the last 36 months?</legend>
+              <div class="form-check form-check-inline">
+                <input id="driver-otr_12_of_last_36_months-yes" class="form-check-input" type="radio" name="otr_12_of_last_36_months" value="Yes" data-label="Do you have at least 12 months of OTR experience in the last 36 months?" required>
+                <label class="form-check-label" for="driver-otr_12_of_last_36_months-yes">Yes</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input id="driver-otr_12_of_last_36_months-no" class="form-check-input" type="radio" name="otr_12_of_last_36_months" value="No" required>
+                <label class="form-check-label" for="driver-otr_12_of_last_36_months-no">No</label>
+              </div>
+            </fieldset>
+            <div class="mb-3">
+              <label class="form-label" for="driver-cdl-years">Approximate years of CDL driving experience</label>
+              <input id="driver-cdl-years" type="number" class="form-control" name="cdl_years" inputmode="decimal" min="0" max="60" step="any" data-label="Approximate years of CDL driving experience" required>
+            </div>
+            <fieldset class="mb-3">
+              <legend class="form-label fs-6">Have you had a DOT-recordable preventable accident in the last 12 months?</legend>
+              <div class="form-check form-check-inline">
+                <input id="driver-preventable_accident_last_12_months-yes" class="form-check-input" type="radio" name="preventable_accident_last_12_months" value="Yes" data-label="Have you had a DOT-recordable preventable accident in the last 12 months?" required>
+                <label class="form-check-label" for="driver-preventable_accident_last_12_months-yes">Yes</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input id="driver-preventable_accident_last_12_months-no" class="form-check-input" type="radio" name="preventable_accident_last_12_months" value="No" required>
+                <label class="form-check-label" for="driver-preventable_accident_last_12_months-no">No</label>
+              </div>
+            </fieldset>
+            <fieldset class="mb-3">
+              <legend class="form-label fs-6">Have you been convicted of a DUI/DWI in the last 60 months?</legend>
+              <div class="form-check form-check-inline">
+                <input id="driver-dui_dwi_last_60_months-yes" class="form-check-input" type="radio" name="dui_dwi_last_60_months" value="Yes" data-label="Have you been convicted of a DUI/DWI in the last 60 months?" required>
+                <label class="form-check-label" for="driver-dui_dwi_last_60_months-yes">Yes</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input id="driver-dui_dwi_last_60_months-no" class="form-check-input" type="radio" name="dui_dwi_last_60_months" value="No" required>
+                <label class="form-check-label" for="driver-dui_dwi_last_60_months-no">No</label>
+              </div>
+            </fieldset>
+            <fieldset class="mb-3">
+              <legend class="form-label fs-6">Have you ever tested positive on, or refused, a DOT drug or alcohol test?</legend>
+              <div class="form-check form-check-inline">
+                <input id="driver-dot_test_positive_or_refused-yes" class="form-check-input" type="radio" name="dot_test_positive_or_refused" value="Yes" data-label="Have you ever tested positive on, or refused, a DOT drug or alcohol test?" required>
+                <label class="form-check-label" for="driver-dot_test_positive_or_refused-yes">Yes</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input id="driver-dot_test_positive_or_refused-no" class="form-check-input" type="radio" name="dot_test_positive_or_refused" value="No" required>
+                <label class="form-check-label" for="driver-dot_test_positive_or_refused-no">No</label>
+              </div>
+            </fieldset>
+            <fieldset class="mb-3">
+              <legend class="form-label fs-6">Do you live in Georgia (CDL issued by Georgia preferred)?</legend>
+              <div class="form-check form-check-inline">
+                <input id="driver-lives_in_georgia-yes" class="form-check-input" type="radio" name="lives_in_georgia" value="Yes" data-label="Do you live in Georgia (CDL issued by Georgia preferred)?" required>
+                <label class="form-check-label" for="driver-lives_in_georgia-yes">Yes</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input id="driver-lives_in_georgia-no" class="form-check-input" type="radio" name="lives_in_georgia" value="No" required>
+                <label class="form-check-label" for="driver-lives_in_georgia-no">No</label>
+              </div>
+            </fieldset>
+            <div class="mb-3">
+              <label class="form-label" for="driver-metro">City / metro area (Atlanta metro preferred)</label>
+              <input id="driver-metro" type="text" class="form-control" name="city_metro" autocomplete="address-level2" data-label="City / metro area (Atlanta metro preferred)" required>
+            </div>
+            <fieldset class="mb-3">
+              <legend class="form-label fs-6">Willing to run dedicated regional out of Atlanta?</legend>
+              <div class="form-check form-check-inline">
+                <input id="driver-dedicated_regional_atlanta-yes" class="form-check-input" type="radio" name="dedicated_regional_atlanta" value="Yes" data-label="Willing to run dedicated regional out of Atlanta?" required>
+                <label class="form-check-label" for="driver-dedicated_regional_atlanta-yes">Yes</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input id="driver-dedicated_regional_atlanta-no" class="form-check-input" type="radio" name="dedicated_regional_atlanta" value="No" required>
+                <label class="form-check-label" for="driver-dedicated_regional_atlanta-no">No</label>
+              </div>
+            </fieldset>
+            <div class="mb-3">
+              <label class="form-label" for="driver-start">Earliest start date, allowing 2–4 weeks for Landstar qualification</label>
+              <input id="driver-start" type="text" class="form-control" name="earliest_start" data-label="Earliest start date, allowing 2–4 weeks for Landstar qualification" required>
             </div>
             <div class="jobs-hp" aria-hidden="true">
               <label for="driver-website">Website</label>
-              <input id="driver-website" type="text" name="website" tabindex="-1" autocomplete="off">
+              <input id="driver-website" type="text" name="_hp" tabindex="-1" autocomplete="off">
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
-            <div data-driver-status class="alert alert-light text-dark mt-3 mb-0" role="status" aria-live="polite" tabindex="-1" hidden></div>
+            <div data-intake-status class="alert alert-light text-dark mt-3 mb-0" role="status" aria-live="polite" tabindex="-1" hidden></div>
           </form>
         </div>
       </div>
@@ -146,7 +255,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
     crossorigin="anonymous"></script>
-  <script src="../../js/driverleadform.js"></script>
+  <script src="../../js/driverleadform.js?v=2"></script>
 </body>
 
 </html>

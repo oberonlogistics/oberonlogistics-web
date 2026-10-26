@@ -58,7 +58,7 @@ cd functions && npm run logs
 - Push branches to `oberonlogistics/oberonlogistics-web`, never a fork: fork PRs get no preview and no Bugbot review.
 - No manual `firebase deploy`. The merge workflow is the only path to production.
 - Nothing under `public/` may hold a secret, service-account key or token.
-- Lead forms open `mailto:`/`tel:` links and post nothing (see RUNBOOK.md). Do not reintroduce a backend call without an issue that asks for it.
+- General contact forms open `mailto:`/`tel:` links and post nothing; recruiting forms post only to Philo intake (#18). See RUNBOOK.md. Do not add any other backend call without an issue that asks for it.
 
 ## Running Tests
 

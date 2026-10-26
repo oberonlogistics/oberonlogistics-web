@@ -1,44 +1,101 @@
 'use strict';
 
-// Driver lead form for postings under /jobs/<slug>/. Until go-live (a later pass), the flag stays
-// off: submit validates locally and sends nothing anywhere.
+// Recruiting forms (the application on each /jobs/<slug>/ posting and the
+// Careers inquiry) post to Philo intake. With the flag off, submit validates
+// locally and sends nothing.
 (function () {
-  const LEADS_ENABLED = false;
+  const LEADS_ENABLED = true;
+  const INTAKE_URL = 'https://philo.oberonlogistics.com/api/intake/185cb5e8b9d518811e281e320036b771705d2d4c33655703';
+  const TIMEOUT_MS = 20000;
+  const FALLBACK = 'Email recruiting@oberonlogistics.com or call +1 (307) 222-8150.';
 
-  var form = document.querySelector('#form-driver-lead');
-  if (!form) return;
-  var status = form.querySelector('[data-driver-status]');
+  document.querySelectorAll('form[data-intake-form]').forEach(function (form) {
+    var status = form.querySelector('[data-intake-status]');
+    var button = form.querySelector('button[type="submit"]');
+    var sending = false;
 
-  form.addEventListener('submit', function (event) {
-    event.preventDefault();
-    if (honeypotFilled(form)) return;
-    ['name', 'phone'].forEach(function (fieldName) {
-      var input = form.elements.namedItem(fieldName);
-      input.setCustomValidity(input.value.trim() ? '' : 'Required');
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      if (sending) return;
+      var invalid = firstInvalid(form);
+      if (invalid) {
+        show(status, problemFor(invalid) + ' Nothing was sent.');
+        invalid.focus();
+        return;
+      }
+      if (!LEADS_ENABLED) {
+        show(status, 'Applications are not open on this page yet. Nothing was sent. ' + FALLBACK);
+        return;
+      }
+      sending = true;
+      button.disabled = true;
+      show(status, 'Sending…');
+      send(readPayload(form)).then(function (message) {
+        if (message.ok) form.reset();
+        show(status, message.text);
+      }).finally(function () {
+        sending = false;
+        button.disabled = false;
+      });
     });
-    var invalid = form.querySelector(':invalid');
-    if (invalid) {
-      show(problemFor(invalid) + ' Nothing was sent.');
-      invalid.focus();
-      return;
-    }
-    if (!LEADS_ENABLED) {
-      show('Applications are not open on this page yet. Nothing was sent. Email recruiting@oberonlogistics.com or call +1 (307) 222-8150.');
-    }
   });
 
-  function honeypotFilled(formEl) {
-    var trap = formEl.elements.namedItem('website');
-    return !!(trap && String(trap.value).trim());
+  function firstInvalid(form) {
+    Array.prototype.forEach.call(form.querySelectorAll('input[required]:not([type="radio"])'), function (input) {
+      input.setCustomValidity(input.value.trim() ? '' : 'Required');
+    });
+    // Not a bare :invalid, which also matches the fieldset around a radio group.
+    return form.querySelector('input:invalid, textarea:invalid');
   }
 
   function problemFor(input) {
-    if (input.name === 'email') return 'Enter a valid email address, or leave it blank.';
-    if (input.name === 'phone') return 'Enter your phone number.';
-    return 'Enter your name.';
+    if (input.type === 'email' && input.value.trim()) return 'Enter a valid email address.';
+    if (input.type === 'number' && input.value.trim()) return 'Enter a number of years from 0 to 60.';
+    var label = input.getAttribute('data-label') || input.name;
+    return 'Missing answer: ' + label + (/\?$/.test(label) ? '' : '.');
   }
 
-  function show(message) {
+  // Flat on purpose: Philo maps name/email/phone to columns and files every
+  // other top-level key under the lead's `fields` itself. Nesting a `fields`
+  // key here would store the answers one level too deep.
+  function readPayload(form) {
+    var payload = {};
+    Array.prototype.forEach.call(form.elements, function (input) {
+      if (!input.name || input.disabled) return;
+      if ((input.type === 'radio' || input.type === 'checkbox') && !input.checked) return;
+      payload[input.name] = input.value.trim();
+    });
+    return payload;
+  }
+
+  function send(payload) {
+    var controller = typeof AbortController === 'function' ? new AbortController() : null;
+    var timer = controller && setTimeout(function () { controller.abort(); }, TIMEOUT_MS);
+    return fetch(INTAKE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: controller ? controller.signal : undefined
+    }).then(function (response) {
+      if (response.ok) {
+        return { ok: true, text: 'Thank you. We received your submission and will be in touch.' };
+      }
+      if (response.status === 429) {
+        return { ok: false, text: 'Too many submissions from your connection. Wait a minute and try again. ' + FALLBACK };
+      }
+      return { ok: false, text: 'Your submission was not received. Try again, or ' + lowerFirst(FALLBACK) };
+    }, function () {
+      return { ok: false, text: 'We could not confirm your submission went through. Try again, or ' + lowerFirst(FALLBACK) };
+    }).finally(function () {
+      clearTimeout(timer);
+    });
+  }
+
+  function lowerFirst(text) {
+    return text.charAt(0).toLowerCase() + text.slice(1);
+  }
+
+  function show(status, message) {
     status.textContent = message;
     status.hidden = false;
     status.focus();

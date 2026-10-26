@@ -6,8 +6,7 @@
   var PHONE_HREF = 'tel:+13072228150';
   var PHONE_TEXT = '+1 (307) 222-8150';
   var INBOX = {
-    info: 'info@oberonlogistics.com',
-    recruiting: 'recruiting@oberonlogistics.com'
+    info: 'info@oberonlogistics.com'
   };
   // Mail apps drop very long mailto URLs, so the draft is shortened to fit.
   var MAX_MAILTO_LENGTH = 1800;
@@ -97,11 +96,6 @@
     return lines.join('\n');
   }
 
-  function subjectFor(email) {
-    if (email === INBOX.recruiting) return 'Careers inquiry - Oberon Logistics';
-    return 'Website inquiry - Oberon Logistics';
-  }
-
   // encodeURIComponent, not URLSearchParams: mailto needs %20, not +.
   function mailtoUrl(email, subject, body) {
     return 'mailto:' + email +
@@ -110,7 +104,7 @@
   }
 
   function buildMailto(email, fields) {
-    var subject = subjectFor(email);
+    var subject = 'Website inquiry - Oberon Logistics';
     var exact = mailtoUrl(email, subject, formatBody(fields));
     if (exact.length <= MAX_MAILTO_LENGTH) return exact;
 
