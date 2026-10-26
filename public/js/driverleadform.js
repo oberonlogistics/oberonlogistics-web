@@ -1,6 +1,6 @@
 'use strict';
 
-// Driver lead form for /jobs/. Until go-live (a later pass), the flag stays
+// Driver lead form for postings under /jobs/<slug>/. Until go-live (a later pass), the flag stays
 // off: submit validates locally and sends nothing anywhere.
 (function () {
   const LEADS_ENABLED = false;

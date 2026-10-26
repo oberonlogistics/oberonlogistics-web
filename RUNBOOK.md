@@ -79,9 +79,11 @@ if [[ "$base" == "https://oberonlogistics.com" ]]; then
   check "https://oberonlogistics-web.web.app/" "Landstar BCO - Oberon Logistics"
 fi
 
-# After /jobs/ ships, uncomment and set the shipped job title:
-# check "$base/jobs/" "the shipped job title"
-# redirect "$base/jobs" "$base/jobs/"
+check "$base/jobs.html" "./jobs/cdl-a-dedicated-regional-atlanta/"
+check "$base/jobs/" "Open Positions | Oberon Logistics"
+redirect "$base/jobs" "$base/jobs/"
+check "$base/jobs/cdl-a-dedicated-regional-atlanta/" "CDL-A Company Driver: Dedicated Regional out of Atlanta"
+redirect "$base/jobs/cdl-a-dedicated-regional-atlanta" "$base/jobs/cdl-a-dedicated-regional-atlanta/"
 
 echo "$fails failure(s)"
 exit $((fails > 0))
