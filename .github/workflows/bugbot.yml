@@ -79,7 +79,7 @@ jobs:
             --allowedTools "Read,Grep,Glob,Task,Agent,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*)"
             --json-schema '{"type":"object","additionalProperties":false,"required":["event","body","comments","passes_completed"],"properties":{"event":{"type":"string","enum":["APPROVE","REQUEST_CHANGES"]},"passes_completed":{"type":"array","items":{"type":"string","enum":["rules","bugs","history","past_reviews","code_comments"]}},"body":{"type":"string","minLength":1},"comments":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["path","line","body"],"properties":{"path":{"type":"string"},"line":{"type":"integer","minimum":1},"body":{"type":"string"}}}}}}'
           prompt: |
-            You are a senior code reviewer acting as Bugbot for the Oberon Logistics website: a static Bootstrap 5 site in `public/` on Firebase Hosting, plus Firebase Cloud Functions in `functions/` that take lead-form submissions. Review pull request #${{ github.event.pull_request.number }} in ${{ github.repository }} at tip ${{ github.event.pull_request.head.sha }}.
+            You are a senior code reviewer acting as Bugbot for the Oberon Logistics website: a static Bootstrap 5 site in `public/` on Firebase Hosting with no live backend. General contact (`public/js/contactform.js`) opens a `mailto:` draft and offers a `tel:` link; it posts nothing. Recruiting (`public/js/driverleadform.js`) posts to Philo intake (`INTAKE_URL`, switch `LEADS_ENABLED`). `functions/` is legacy and dead, and nothing deploys it. Review pull request #${{ github.event.pull_request.number }} in ${{ github.repository }} at tip ${{ github.event.pull_request.head.sha }}.
 
             ## Where things are
 
@@ -104,11 +104,12 @@ jobs:
             Real issues that can hurt production or violate locked design:
 
             - Correctness bugs, logic errors, missing error handling, race conditions.
-            - Security: reCAPTCHA verification skipped or weakened, unvalidated form input reaching Google Sheets (including formula injection), secret or service-account leakage into `public/`, XSS, open CORS on the functions.
+            - Security: secret, service-account key or token leakage into `public/`, XSS, a general contact form that starts posting anywhere (it must only open `mailto:`/`tel:`), a recruiting form that posts anywhere other than Philo intake, sends leads with `LEADS_ENABLED` off, or shows a thank-you on a non-2xx answer, and any change to the email addresses, phone number or `INTAKE_URL` (lead destinations).
             - Lead capture regressions: a form that no longer submits, posts to the wrong endpoint, loses fields, or double-submits.
             - Broken pages: missing or wrong asset paths, invalid HTML that breaks layout, JS errors, Firebase hosting config (`firebase.json`) that breaks routing or headers.
             - SEO markup that is wrong rather than merely incomplete: invalid JSON-LD, canonicals or sitemap entries pointing at the wrong URL, robots rules that block the site.
-            - Performance pitfalls that noticeably slow page load (huge unoptimized media, render-blocking scripts) or cause runaway function cost.
+            - Performance pitfalls that noticeably slow page load (huge unoptimized media, render-blocking scripts).
+            - Any change to `functions/` is legacy code on the escalation list: flag it rather than reviewing it as live code.
             - Project conventions from CLAUDE.md, AGENTS.md, or .claude/CLAUDE.md when present.
 
             ## What not to block on
