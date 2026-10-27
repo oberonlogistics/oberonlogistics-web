@@ -19,3 +19,5 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OBERONLOGISTICS_WEB }}'
           channelId: live
           projectId: oberonlogistics-web
+      - name: Health check production
+        run: bash scripts/health-check.sh

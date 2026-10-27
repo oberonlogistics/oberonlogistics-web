@@ -42,77 +42,23 @@ gh run list \
 
 Wait until `status` is `completed` and `conclusion` is `success` (or use `gh run watch <run-id>`).
 
-Then run the page checks. Paste the whole block: it runs in a child `bash`, so a failure does not close your terminal. It reports every failure and exits non-zero if any check failed. As written it checks production. To check a PR preview before merge, put the preview channel URL after `--` on the first line (e.g. `bash -s -- https://oberonlogistics-web--pr-N-xxxx.web.app <<'EOF'`). It never reads `BASE` or any other variable from your shell.
+The merge workflow runs the page checks against production right after the deploy, so `success` means the deploy finished and every check passed. The PR workflow runs the same checks against each PR's preview channel in `build_and_preview`.
+
+The checks live in [`scripts/health-check.sh`](scripts/health-check.sh). It reports every failure and exits non-zero if any check failed. To run it by hand from a checkout, with no argument it checks production; pass a preview channel URL to check a preview:
 
 ```bash
-bash -s -- <<'EOF'
-base="${1:-https://oberonlogistics.com}"
-fails=0
-
-fail() { echo "FAIL $*" >&2; fails=$((fails + 1)); }
-
-# 200, the body contains the needle, and (if given) does not contain the forbidden string.
-check() {
-  local url="$1" needle="$2" forbidden="${3:-}" body code
-  body=$(curl -sS --max-time 20 -w '\n%{http_code}' "$url") || { fail "$url curl error"; return; }
-  code="${body##*$'\n'}"
-  [[ "$code" == "200" ]] || { fail "$url HTTP $code"; return; }
-  grep -F -q -- "$needle" <<<"$body" || { fail "$url missing: $needle"; return; }
-  [[ -z "$forbidden" ]] || ! grep -F -q -- "$forbidden" <<<"$body" || { fail "$url contains: $forbidden"; return; }
-  echo "OK   $url"
-}
-
-# 301 to exactly the expected location.
-redirect() {
-  local url="$1" want="$2" got
-  got=$(curl -sS --max-time 20 -o /dev/null -w '%{http_code} %{redirect_url}' "$url") || { fail "$url curl error"; return; }
-  [[ "$got" == "301 $want" ]] || { fail "$url got '$got', want '301 $want'"; return; }
-  echo "OK   $url -> $want"
-}
-
-# Philo answers a CORS preflight from this origin for the intake URL the deployed JS posts to.
-intake_preflight() {
-  local js url headers
-  js=$(curl -sS --max-time 20 "$base/js/driverleadform.js") || { fail "intake JS curl error"; return; }
-  url=$(grep -o 'https://philo.oberonlogistics.com/api/intake/[0-9a-f]*' <<<"$js" | head -n 1)
-  [[ -n "$url" ]] || { fail "driverleadform.js has no Philo intake URL"; return; }
-  headers=$(curl -sS --max-time 20 -o /dev/null -D - -X OPTIONS \
-    -H "Origin: $base" -H "Access-Control-Request-Method: POST" \
-    -H "Access-Control-Request-Headers: content-type" "$url" | tr -d '\r') || { fail "intake preflight curl error"; return; }
-  grep -q '^HTTP/[0-9.]* 204' <<<"$headers" || { fail "intake preflight not 204"; return; }
-  grep -qix "access-control-allow-origin: $base" <<<"$headers" || { fail "intake preflight does not allow $base"; return; }
-  echo "OK   Philo intake preflight from $base"
-}
-
-check "$base/" "Landstar BCO - Oberon Logistics"
-check "$base/jobs.html" "Careers | Oberon Logistics"
-check "$base/carriers/" "Oberon Logistics - Carriers"
-check "$base/" 'href="/favicon.ico"'
-redirect "$base/carriers" "$base/carriers/"
-# Lead form handler: mailto hand-off, no call to the dead Cloud Function.
-check "$base/js/contactform.js" "info@oberonlogistics.com" "cloudfunctions.net"
-# Recruiting forms: Philo intake handler, loaded by the Careers page.
-check "$base/js/driverleadform.js" "philo.oberonlogistics.com/api/intake/"
-check "$base/jobs.html" "driverleadform.js"
-intake_preflight
-
-if [[ "$base" == "https://oberonlogistics.com" ]]; then
-  redirect "https://www.oberonlogistics.com/" "https://oberonlogistics.com/"
-  check "https://oberonlogistics-web.web.app/" "Landstar BCO - Oberon Logistics"
-fi
-
-check "$base/jobs.html" "./jobs/cdl-a-dedicated-regional-atlanta/"
-check "$base/jobs/" "Open Positions | Oberon Logistics"
-redirect "$base/jobs" "$base/jobs/"
-check "$base/jobs/cdl-a-dedicated-regional-atlanta/" "CDL-A Company Driver: Dedicated Regional out of Atlanta"
-check "$base/jobs/cdl-a-dedicated-regional-atlanta/" "driverleadform.js"
-check "$base/jobs/cdl-a-dedicated-regional-atlanta/" 'id="apply"' "Apply on this page"
-redirect "$base/jobs/cdl-a-dedicated-regional-atlanta" "$base/jobs/cdl-a-dedicated-regional-atlanta/"
-
-echo "$fails failure(s)"
-exit $((fails > 0))
-EOF
+bash scripts/health-check.sh
+bash scripts/health-check.sh https://oberonlogistics-web--pr-N-xxxx.web.app
 ```
+
+To check a PR's preview by hand, run that PR's own copy so its new checks run too:
+
+```bash
+git fetch origin pull/N/head
+git show FETCH_HEAD:scripts/health-check.sh | bash -s -- https://oberonlogistics-web--pr-N-xxxx.web.app
+```
+
+A cloud Claude Code session can't run it unless its environment allows `*.web.app`, `oberonlogistics.com`, `www.oberonlogistics.com` and `philo.oberonlogistics.com`; the default Trusted network level blocks them. Rely on the CI step instead.
 
 ## Rollback
 
