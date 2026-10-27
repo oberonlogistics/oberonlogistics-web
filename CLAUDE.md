@@ -4,53 +4,52 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 ## Project Overview
 
-This is a Firebase-hosted static website for Oberon Logistics, a Landstar BCO specializing in Capacity Operations. The project consists of:
+This is a static website for Oberon Logistics, a Landstar BCO specializing in Capacity Operations, served by Firebase Hosting in project `oberonlogistics-web`. Production, deploys and rollback are in [RUNBOOK.md](RUNBOOK.md).
 
-- **Frontend**: Static HTML/CSS/JS in `public/` folder (Bootstrap 5)
-- **Backend**: Firebase Cloud Functions in `functions/` folder
-- **Hosting**: Firebase Hosting with automatic deployments via GitHub Actions
+- **Site**: Static HTML/CSS/JS in `public/` (Bootstrap 5 from a CDN). No build step.
+- **Backend**: None in this repo. Recruiting forms post to Philo intake, an outside service; general contact forms post nothing.
+- **Hosting**: Deployed only by GitHub Actions. A PR gets a preview channel; a merge to `main` deploys the live channel.
 
 ## Architecture
 
-### Frontend (`public/`)
-- `index.html` - Main landing page with lead capture form
-- `jobs.html` - Careers page with job inquiry form
-- `carriers/index.html` - Carrier FAQ page
+### Site (`public/`)
+- `index.html` - Home page with the general contact form
+- `carriers/index.html` - Carrier FAQ page with the general contact form
+- `jobs.html` - Careers page with the recruiting form
+- `jobs/index.html` - List of open positions
+- `jobs/<slug>/index.html` - One page per job posting, each with the recruiting application (currently `cdl-a-dedicated-regional-atlanta/`)
+- `404.html` - Not-found page
+- `robots.txt`, `sitemap.xml`, `llms.txt`, `.well-known/indexnow.txt` - Crawler and AI-search files
 - `css/style.css` - Custom styles
-- `js/contactform.js` - Form submission handler with duplicate submission prevention
+- `js/contactform.js` - General contact handler: opens a `mailto:` draft to info@ and offers a `tel:` link
+- `js/driverleadform.js` - Recruiting handler: posts JSON to Philo intake (`INTAKE_URL`); `LEADS_ENABLED = false` turns sending off
+- `js/jumbo-video.js` - Hero video crossfade on the home and Careers pages
+- `img/` - Images and hero videos
 
-### Backend (`functions/`)
-- `index.js` - Contains `processFormLead` HTTPS function that:
-  - Validates reCAPTCHA tokens (score threshold: 0.2)
-  - Writes leads to Google Sheets (Leads tab)
-  - Requires Firebase config secrets: `service_account`, `sheets.id`, `recaptcha.key`
+### Legacy (`functions/`)
+- Holds the old `processFormLead` Cloud Function (reCAPTCHA, Google Sheets, Node 14). It belonged to the other project, `oberonlogistics-2a5d9`, and is dead (404). Nothing on the site calls it and no workflow deploys it.
+- Out of scope: do not run, deploy or extend it. Any change to `functions/`, including deleting it, is on the escalation list below.
 
 ## Common Commands
 
 ```bash
-# Install dependencies
-cd functions && npm install
+# Preview a PR: push a branch to oberonlogistics/oberonlogistics-web and open a PR.
+# The PR workflow posts the preview channel URL as a comment.
 
-# Run Firebase emulators (functions only)
-cd functions && npm run serve
+# Test: run the RUNBOOK health check against that preview URL.
+# See RUNBOOK.md#health-check.
 
-# Deploy only Cloud Functions
-cd functions && npm run deploy
+# Check a PR against the Shippability Bar: see the gh command under Shippability Bar below.
 
-# Deploy hosting
-firebase deploy --only hosting
-
-# View function logs
-cd functions && npm run logs
+# Deploy: merge the PR. firebase-hosting-merge.yml deploys Hosting to the live channel.
 ```
 
 ## Key Implementation Details
 
-- Form uses reCAPTCHA v3 with site key `6LcAKMgbAAAAAI1v-qN1hMhcgiv--3ka-sU5vsaZ`
-- Backend URL is hardcoded in contactform.js: `https://us-central1-oberonlogistics-2a5d9.cloudfunctions.net/api/leads`
-- Lead form has client-side duplicate submission guard (`contactFormSubmitted` flag)
-- Google Sheets appends to range `Leads!A2:F`
-- Node.js version: 14 (configured in functions/package.json)
+- Lead destinations: general contact goes to `info@oberonlogistics.com` and the `tel:` number in `public/js/contactform.js`; recruiting goes to the Philo intake URL in `public/js/driverleadform.js` (funnel "CDL-A Company Driver"). The Philo form key is a public routing ID, not a credential.
+- Recruiting shows a thank-you only on a 2xx answer from Philo. The health check also confirms Philo answers a CORS preflight from the site's origin.
+- Scripts are cache-busted with a `?v=N` query string; bump it when you change a script's behavior.
+- The merge and PR workflows deploy Hosting only. The `database` block in `firebase.json` and `database.rules.json` are not deployed by them.
 
 ## Critical Constraints
 
