@@ -105,6 +105,7 @@ check "$base/jobs/" "Open Positions | Oberon Logistics"
 redirect "$base/jobs" "$base/jobs/"
 check "$base/jobs/cdl-a-dedicated-regional-atlanta/" "CDL-A Company Driver: Dedicated Regional out of Atlanta"
 check "$base/jobs/cdl-a-dedicated-regional-atlanta/" "driverleadform.js"
+check "$base/jobs/cdl-a-dedicated-regional-atlanta/" 'id="apply"' "Apply on this page"
 redirect "$base/jobs/cdl-a-dedicated-regional-atlanta" "$base/jobs/cdl-a-dedicated-regional-atlanta/"
 
 echo "$fails failure(s)"
