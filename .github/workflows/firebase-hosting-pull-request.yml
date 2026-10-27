@@ -14,7 +14,12 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: FirebaseExtended/action-hosting-deploy@500ac625ca2dd40cbd15f7659af953801858032a # v0.11.0
+        id: deploy
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OBERONLOGISTICS_WEB }}'
           projectId: oberonlogistics-web
+      - name: Health check the preview
+        env:
+          PREVIEW_URL: '${{ steps.deploy.outputs.details_url }}'
+        run: bash scripts/health-check.sh "$PREVIEW_URL"

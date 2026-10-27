@@ -36,7 +36,7 @@ This is a static website for Oberon Logistics, a Landstar BCO specializing in Ca
 # Preview a PR: push a branch to oberonlogistics/oberonlogistics-web and open a PR.
 # The PR workflow posts the preview channel URL as a comment.
 
-# Test: run the RUNBOOK health check against that preview URL.
+# Test: build_and_preview runs the RUNBOOK health check (scripts/health-check.sh) against that preview URL.
 # See RUNBOOK.md#health-check.
 
 # Check a PR against the Shippability Bar: see the gh command under Shippability Bar below.
@@ -61,7 +61,7 @@ This is a static website for Oberon Logistics, a Landstar BCO specializing in Ca
 
 ## Running Tests
 
-There is no unit test suite. The test is the health check in [RUNBOOK.md](RUNBOOK.md#health-check), run against the PR's preview channel URL. A PR that adds a page, route or redirect adds a `check`/`redirect` line for it to that health check in the same PR.
+There is no unit test suite. The test is the health check in [`scripts/health-check.sh`](scripts/health-check.sh) (see [RUNBOOK.md](RUNBOOK.md#health-check)). `build_and_preview` runs it against the PR's preview channel URL, and the merge workflow runs it against production after each deploy. A PR that adds a page, route or redirect adds a `check`/`redirect` line for it to that script in the same PR.
 
 ## Triage Rules
 
@@ -78,7 +78,7 @@ A PR is shippable, and its author (human or agent) merges it without further sig
 1. **Not escalated.** The PR touches nothing on the escalation list below.
 2. **CI green.** `build_and_preview`, `Deploy Preview` and Bugbot's `review` each completed with `SUCCESS` on the head SHA; pending, skipped or missing is not green, and "no checks reported" is not green. No other check failed. The `claude` check reports `SKIPPED` on any PR that does not mention `@claude`; that is expected.
 3. **Bugbot approved.** The latest review from `ergofobe-bot` is `APPROVED` and its commit is the head SHA. A `CHANGES_REQUESTED` is cleared only by pushing a fix and getting a fresh `APPROVED`, never by dismissing it. The PR must not be opened by `ergofobe-bot`: GitHub does not let it approve its own PR, so Bugbot only posts a comment-form verdict there and this item can never be met. Close such a PR and open a new one for the same branch from another account, such as `ergofobe`; reopening keeps the original author.
-4. **Preview healthy.** The Firebase preview comment names the head SHA's short form, and the RUNBOOK health check passes against that preview URL.
+4. **Preview healthy.** The Firebase preview comment names the head SHA's short form, and the RUNBOOK health check (`scripts/health-check.sh`) passed against that preview URL. `build_and_preview` runs it right after deploying the preview, so its `SUCCESS` on the head SHA (item 2) covers this item; no hand run is needed. Weakening that script or that workflow step is loosening the RUNBOOK health check (escalation list).
 5. **Triage clean.** Zero blockers and zero significants open from self-review and any Opus pass. Bugbot Non-blocking notes do not hold a merge.
 6. **Ready.** The PR is not a draft and has no merge conflict with `main`.
 
@@ -93,7 +93,7 @@ gh pr view N --repo oberonlogistics/oberonlogistics-web \
          preview: ([.comments[] | select(.author.login == "github-actions") | .body] | last)}'
 ```
 
-Merge with `gh pr merge N --squash --delete-branch`. Then run the RUNBOOK health check against production. If it fails, roll back per RUNBOOK.md before doing anything else.
+Merge with `gh pr merge N --squash --delete-branch`. Then confirm `firebase-hosting-merge.yml` succeeded for the merge commit ([RUNBOOK.md](RUNBOOK.md#health-check)); it runs the health check against production after the deploy. If it fails, roll back per RUNBOOK.md before doing anything else.
 
 ### Escalation list
 
