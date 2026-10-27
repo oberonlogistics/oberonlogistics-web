@@ -261,6 +261,12 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 2px;
 }
 
+/* Left-aligned sections: anchor the accent bar to the heading's left edge */
+.content-left h2::after {
+  left: 0;
+  transform: none;
+}
+
 /* About Section - Dark */
 .bg-dark {
   background-color: var(--color-navy-dark) !important;
