@@ -7,7 +7,7 @@ This file provides guidance to Claude Code when working with code in this reposi
 This is a static website for Oberon Logistics, a Landstar BCO specializing in Capacity Operations, served by Firebase Hosting in project `oberonlogistics-web`. Production, deploys and rollback are in [RUNBOOK.md](RUNBOOK.md).
 
 - **Site**: Static HTML/CSS/JS in `public/` (Bootstrap 5 from a CDN). No build step.
-- **Backend**: None in this repo. Recruiting forms post to Philo intake, an outside service; general contact forms post nothing.
+- **Backend**: None live. `functions/` is legacy (see below). Recruiting forms post to Philo intake, an outside service; general contact forms post nothing.
 - **Hosting**: Deployed only by GitHub Actions. A PR gets a preview channel; a merge to `main` deploys the live channel.
 
 ## Architecture
@@ -48,7 +48,7 @@ This is a static website for Oberon Logistics, a Landstar BCO specializing in Ca
 
 - Lead destinations: general contact goes to `info@oberonlogistics.com` and the `tel:` number in `public/js/contactform.js`; recruiting goes to the Philo intake URL in `public/js/driverleadform.js` (funnel "CDL-A Company Driver"). The Philo form key is a public routing ID, not a credential.
 - Recruiting shows a thank-you only on a 2xx answer from Philo. The health check also confirms Philo answers a CORS preflight from the site's origin.
-- Scripts are cache-busted with a `?v=N` query string; bump it when you change a script's behavior.
+- The form scripts are loaded with a `?v=N` query string; bump it on every page that loads the script when you change its behavior.
 - The merge and PR workflows deploy Hosting only. The `database` block in `firebase.json` and `database.rules.json` are not deployed by them.
 
 ## Critical Constraints
