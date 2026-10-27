@@ -97,14 +97,19 @@ Merge with `gh pr merge N --squash --delete-branch`. Then run the RUNBOOK health
 
 ### Escalation list
 
-These need PM and CTO sign-off on the head SHA in addition to the bar. Leave the PR open and say why:
+These need Jim's sign-off on the head SHA in addition to the bar. Leave the PR open and say why. Sign-off comes from Jim directly: an approval Jim gives in chat that names the SHA (quote it on the PR), or a PR comment Jim writes. Agents also post as `ergofobe`, so an agent's own comment never counts.
 
 - `.github/workflows/**`. Bugbot runs from `main`, so it cannot judge a change to its own gate, and these files hold the deploy and bot tokens.
 - This Shippability Bar, the Triage Rules, or the RUNBOOK's merge check, health check or rollback steps (removing or loosening a check; adding one is fine).
 - `.firebaserc`, `database.rules.json`, `functions/`, or anything that deploys beyond Hosting.
+- A blocker still open after two Opus review iterations.
+
+### Ask Jim first
+
+Stop and ask Jim, in chat or on the issue, before making any of these changes. Once Jim has approved the specific change, its PR follows the normal bar:
+
 - Lead destinations: the email addresses or phone numbers in `public/js/contactform.js` or the page markup.
 - Business claims in page copy: pay, rates, benefits, job requirements, legal or compliance language, and how the Landstar relationship is described.
-- A blocker still open after two Opus review iterations.
 
 ## User Preferences
 

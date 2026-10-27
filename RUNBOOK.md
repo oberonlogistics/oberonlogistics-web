@@ -23,7 +23,7 @@ A merge to `main` runs [`.github/workflows/firebase-hosting-merge.yml`](.github/
 
 A pull request opened in this repo gets a preview channel from [`.github/workflows/firebase-hosting-pull-request.yml`](.github/workflows/firebase-hosting-pull-request.yml). The workflow skips a pull request whose head branch is on a fork, so fork PRs get no checks and no preview. Push branches to `oberonlogistics/oberonlogistics-web` itself, not to a fork.
 
-Merge check: the [Shippability Bar in CLAUDE.md](CLAUDE.md#shippability-bar), on the current head SHA. In short: CI green including the preview deploy ("no checks reported" is not green), Bugbot `APPROVED` on that SHA, and the health check below passing against the preview channel URL the Action posts on the PR. A PR that meets it is merged by its author; a PR on the bar's escalation list also needs PM and CTO sign-off on that SHA.
+Merge check: the [Shippability Bar in CLAUDE.md](CLAUDE.md#shippability-bar), on the current head SHA. In short: CI green including the preview deploy ("no checks reported" is not green), Bugbot `APPROVED` on that SHA, and the health check below passing against the preview channel URL the Action posts on the PR. A PR that meets it is merged by its author; a PR on the bar's escalation list also needs Jim's sign-off on that SHA.
 
 No manual `firebase deploy`.
 
