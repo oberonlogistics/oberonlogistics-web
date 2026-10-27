@@ -87,6 +87,7 @@ intake_preflight() {
 check "$base/" "Landstar BCO - Oberon Logistics"
 check "$base/jobs.html" "Careers | Oberon Logistics"
 check "$base/carriers/" "Oberon Logistics - Carriers"
+check "$base/" 'href="/favicon.ico"'
 redirect "$base/carriers" "$base/carriers/"
 # Lead form handler: mailto hand-off, no call to the dead Cloud Function.
 check "$base/js/contactform.js" "info@oberonlogistics.com" "cloudfunctions.net"
