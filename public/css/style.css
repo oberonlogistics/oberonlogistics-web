@@ -515,6 +515,11 @@ footer p {
   padding: 0.25rem 0.5rem;
 }
 
+/* Bootstrap's default link blue is only ~3.3:1 on the dark card surface */
+[data-theme="dark"] a:not([class]) {
+  color: var(--color-heading);
+}
+
 [data-theme="dark"] .text-dark {
   color: var(--color-gray-800) !important;
 }
