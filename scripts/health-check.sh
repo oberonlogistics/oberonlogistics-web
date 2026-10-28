@@ -48,6 +48,8 @@ redirect "$base/carriers" "$base/carriers/"
 check "$base/js/contactform.js" "info@oberonlogistics.com" "cloudfunctions.net"
 # Recruiting forms: Philo intake handler, loaded by the Careers page.
 check "$base/js/driverleadform.js" "philo.oberonlogistics.com/api/intake/"
+check "$base/js/theme.js" "data-theme-choice"
+check "$base/" "js/theme.js"
 check "$base/jobs.html" "driverleadform.js"
 intake_preflight
 

@@ -23,6 +23,7 @@ This is a static website for Oberon Logistics, a Landstar BCO specializing in Ca
 - `css/style.css` - Custom styles
 - `js/contactform.js` - General contact handler: opens a `mailto:` draft to info@ and offers a `tel:` link
 - `js/driverleadform.js` - Recruiting handler: posts JSON to Philo intake (`INTAKE_URL`); `LEADS_ENABLED = false` turns sending off
+- `js/theme.js` - Light/dark/system theme. Loaded synchronously in `<head>` of every page with the navbar so it sets `<html data-theme>` (resolved) before first paint: no flash, no layout shift. The choice (`light`/`dark`/`system`) is saved in `localStorage` key `theme`; `system` follows `prefers-color-scheme` live. Dark colors are `:root[data-theme="dark"]` token overrides at the end of `css/style.css`
 - `js/jumbo-video.js` - Hero video crossfade on the home and Careers pages
 - `img/` - Images and hero videos
 
