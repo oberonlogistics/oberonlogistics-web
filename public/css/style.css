@@ -118,6 +118,14 @@ h1, h2, h3, h4, h5, h6 {
   min-height: 0;
 }
 
+.jumbotron-short {
+  background: linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-dark) 100%);
+}
+
+.jumbotron-short::before {
+  display: none;
+}
+
 .jumbotron-short .jumbotron-content {
   padding-top: 6rem;
 }
