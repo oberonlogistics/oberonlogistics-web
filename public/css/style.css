@@ -113,6 +113,15 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 
+.jumbotron-short {
+  height: auto;
+  min-height: 0;
+}
+
+.jumbotron-short .jumbotron-content {
+  padding-top: 6rem;
+}
+
 .jumbotron-video {
   position: absolute;
   top: 50%;
