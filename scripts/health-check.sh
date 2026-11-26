@@ -25,6 +25,14 @@ redirect() {
   echo "OK   $url -> $want"
 }
 
+# 200 with the expected Content-Type (for binary files, which check cannot grep).
+asset() {
+  local url="$1" want="$2" got
+  got=$(curl -sS --max-time 20 -o /dev/null -w '%{http_code} %{content_type}' "$url") || { fail "$url curl error"; return; }
+  [[ "$got" == "200 $want"* ]] || { fail "$url got '$got', want '200 $want'"; return; }
+  echo "OK   $url"
+}
+
 # Philo answers a CORS preflight from this origin for the intake URL the deployed JS posts to.
 intake_preflight() {
   local js url headers
@@ -55,6 +63,16 @@ check "$base/carriers/" "js/theme.js"
 check "$base/jobs/" "js/theme.js"
 check "$base/jobs/cdl-a-dedicated-regional-atlanta/" "js/theme.js"
 check "$base/jobs.html" "driverleadform.js"
+# Brand foundations (DESIGN.md): vendored tokens and self-hosted font, no Google Fonts.
+check "$base/brand/tokens.css" "--ol-color-bg"
+check "$base/brand/fonts.css" "plus-jakarta-sans-latin-700-normal.woff2"
+for w in 400 500 600 700; do
+  asset "$base/brand/fonts/plus-jakarta-sans-latin-$w-normal.woff2" "font/woff2"
+done
+check "$base/css/style.css" "var(--ol-font-sans)" "fonts.googleapis.com"
+for page in / /jobs.html /carriers/ /jobs/ /jobs/cdl-a-dedicated-regional-atlanta/; do
+  check "$base$page" "brand/tokens.css"
+done
 intake_preflight
 
 if [[ "$base" == "https://oberonlogistics.com" ]]; then
