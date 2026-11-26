@@ -1,0 +1,146 @@
+/*
+ * Oberon Logistics design tokens, v2. The one source of colour, type and spacing for every first-party app
+ * (DESIGN.md). Keeps every v1 token name from oberonlogistics-auth's packages/brand and adds surfaces, tints,
+ * the dark rail, and spacing, type, radius, elevation and motion scales.
+ * Light is the default. Dark applies under <html data-theme="dark">, or when the system prefers dark and no
+ * explicit light theme was chosen, so the theme is right before (or without) any script.
+ * Every text/background pair in tests/contrast.test.ts meets WCAG AA.
+ */
+
+:root {
+  color-scheme: light;
+  /* v1 names. Values unchanged except bg, cooled a touch (light #fafaf9 → #f6f7f9; dark below) so white cards lift off it */
+  --ol-color-bg: #f6f7f9;
+  --ol-color-surface: #ffffff;
+  --ol-color-text: #1f2937;
+  --ol-color-muted: #4b5563;
+  --ol-color-border: #e5e7eb;
+  --ol-color-primary: #1e3a8a;
+  --ol-color-primary-hover: #1e2d5a;
+  --ol-color-on-primary: #ffffff;
+  --ol-color-accent: #059669;
+  --ol-color-accent-strong: #047857;
+  --ol-color-on-accent: #ffffff;
+  --ol-color-heading: #1e3a8a;
+  --ol-color-link: #1e3a8a;
+  --ol-color-danger: #b91c1c;
+  --ol-color-focus: #047857;
+  --ol-color-logo-chip: transparent;
+  --ol-font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --ol-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; /* hosts, IDs, code: the system's own */
+
+  /* v2: surfaces and states */
+  --ol-color-surface-2: #f1f3f6; /* hover rows, segmented track */
+  --ol-color-outsider-bg: #e2e7ef; /* the fill behind text a stranger chose (outsider.css); visible on bg and surface */
+  --ol-color-border-strong: #d1d5db;
+  --ol-color-primary-soft: #e8edf9; /* selected item tint */
+  --ol-color-accent-soft: #e6f6f0;
+  --ol-color-good-ink: #047857; /* green text: eyebrows, good pills, deltas */
+  --ol-color-action: #1e3a8a; /* filled primary button */
+  --ol-color-action-hover: #1e2d5a;
+  --ol-color-warn: #92400e;
+  --ol-color-warn-soft: #fef3c7;
+  --ol-color-danger-soft: #fdecec;
+
+  /* v2: the rail — always dark, in both themes */
+  --ol-rail-bg: #0c1838;
+  --ol-rail-bg-hover: #152450;
+  --ol-rail-bg-active: #1a2c5e;
+  --ol-rail-ink: #ffffff; /* active label, active icon */
+  --ol-rail-label: #c3cce0; /* resting label: 9.9:1 on rail-bg */
+  --ol-rail-section: #8592b3; /* group headings: 5.4:1 */
+  --ol-rail-edge: #10b981; /* the brand-green leading edge */
+  --ol-rail-width: 15.5rem;
+  --ol-rail-width-collapsed: 4.25rem;
+
+  /* v2: scales */
+  --ol-space-1: 0.25rem;
+  --ol-space-2: 0.5rem;
+  --ol-space-3: 0.75rem;
+  --ol-space-4: 1rem;
+  --ol-space-5: 1.5rem;
+  --ol-space-6: 2rem;
+  --ol-space-7: 3rem;
+  --ol-text-xs: 0.75rem;
+  --ol-text-sm: 0.8125rem;
+  --ol-text-md: 0.9375rem;
+  --ol-text-lg: 1.125rem;
+  --ol-text-xl: 1.375rem;
+  --ol-text-2xl: 1.75rem;
+  --ol-radius-sm: 0.375rem;
+  --ol-radius: 0.5rem;
+  --ol-radius-lg: 0.75rem;
+  --ol-radius-pill: 999px;
+  --ol-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --ol-shadow-md: 0 4px 10px -2px rgba(16, 24, 40, 0.1), 0 2px 4px -2px rgba(16, 24, 40, 0.06);
+  --ol-shadow-pop: 0 16px 40px -8px rgba(12, 24, 56, 0.28), 0 4px 10px -4px rgba(12, 24, 56, 0.12);
+  --ol-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ol-dur: 140ms;
+  --ol-topbar-height: 3.5rem;
+  --ol-panel-width: 20rem; /* app switcher and account menu share it */
+  --ol-rule-width: 3px;
+  --ol-radius-bar: 2px;
+  --ol-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --ol-line-height: 1.6;
+  --ol-heading-line-height: 1.2;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ol-color-bg: #0b1222;
+  --ol-color-surface: #131c31;
+  --ol-color-surface-2: #1a2540;
+  --ol-color-outsider-bg: #202c4a;
+  --ol-color-text: #e5e7eb;
+  --ol-color-muted: #9ca3af;
+  --ol-color-border: #26324d;
+  --ol-color-border-strong: #3a4766;
+  --ol-color-heading: #bfd3fe;
+  --ol-color-link: #93c5fd;
+  --ol-color-primary-soft: #1c2b52;
+  --ol-color-accent-soft: #0f2e27;
+  --ol-color-good-ink: #34d399;
+  --ol-color-action: #3b5bdb;
+  --ol-color-action-hover: #2f4bc0;
+  --ol-color-warn: #fcd34d;
+  --ol-color-warn-soft: #3a2a0a;
+  --ol-color-danger: #fca5a5;
+  --ol-color-danger-soft: #3b1518;
+  --ol-color-focus: #10b981;
+  --ol-color-logo-chip: #ffffff;
+  --ol-rail-bg: #070e22;
+  --ol-rail-bg-hover: #0f1a38;
+  --ol-rail-bg-active: #15244a;
+  --ol-shadow-pop: 0 16px 40px -8px rgba(0, 0, 0, 0.6), 0 4px 10px -4px rgba(0, 0, 0, 0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ol-color-bg: #0b1222;
+    --ol-color-surface: #131c31;
+    --ol-color-surface-2: #1a2540;
+    --ol-color-outsider-bg: #202c4a;
+    --ol-color-text: #e5e7eb;
+    --ol-color-muted: #9ca3af;
+    --ol-color-border: #26324d;
+    --ol-color-border-strong: #3a4766;
+    --ol-color-heading: #bfd3fe;
+    --ol-color-link: #93c5fd;
+    --ol-color-primary-soft: #1c2b52;
+    --ol-color-accent-soft: #0f2e27;
+    --ol-color-good-ink: #34d399;
+    --ol-color-action: #3b5bdb;
+    --ol-color-action-hover: #2f4bc0;
+    --ol-color-warn: #fcd34d;
+    --ol-color-warn-soft: #3a2a0a;
+    --ol-color-danger: #fca5a5;
+    --ol-color-danger-soft: #3b1518;
+    --ol-color-focus: #10b981;
+    --ol-color-logo-chip: #ffffff;
+    --ol-rail-bg: #070e22;
+    --ol-rail-bg-hover: #0f1a38;
+    --ol-rail-bg-active: #15244a;
+    --ol-shadow-pop: 0 16px 40px -8px rgba(0, 0, 0, 0.6), 0 4px 10px -4px rgba(0, 0, 0, 0.4);
+  }
+}
