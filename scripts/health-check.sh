@@ -72,6 +72,9 @@ check "$base/css/style.css" "var(--ol-font-sans)" "fonts.googleapis.com"
 for page in / /jobs.html /carriers/ /jobs/cdl-a-dedicated-regional-atlanta/; do
   check "$base$page" "brand/tokens.css"
 done
+for page in / /jobs.html /carriers/ /jobs/cdl-a-dedicated-regional-atlanta/ /404.html; do
+  check "$base$page" "fbq('init', '1186325310594116')"
+done
 intake_preflight
 
 if [[ "$base" == "https://oberonlogistics.com" ]]; then
