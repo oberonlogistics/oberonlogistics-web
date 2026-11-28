@@ -15,8 +15,7 @@ This is a static website for Oberon Logistics, a Landstar BCO specializing in Ca
 ### Site (`public/`)
 - `index.html` - Home page with the general contact form
 - `carriers/index.html` - Carrier FAQ page with the general contact form
-- `jobs.html` - Careers page with the recruiting form
-- `jobs/index.html` - List of open positions
+- `jobs.html` - Careers page: open positions and the recruiting form. `/jobs` and `/jobs/` 301 to it (`redirects` in `firebase.json`)
 - `jobs/<slug>/index.html` - One page per job posting, each with the recruiting application (currently `cdl-a-dedicated-regional-atlanta/`)
 - `404.html` - Not-found page
 - `robots.txt`, `sitemap.xml`, `llms.txt`, `.well-known/indexnow.txt` - Crawler and AI-search files
