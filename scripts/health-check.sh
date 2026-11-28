@@ -60,7 +60,6 @@ check "$base/js/theme.js" "data-theme-choice"
 check "$base/" "js/theme.js"
 check "$base/jobs.html" "js/theme.js"
 check "$base/carriers/" "js/theme.js"
-check "$base/jobs/" "js/theme.js"
 check "$base/jobs/cdl-a-dedicated-regional-atlanta/" "js/theme.js"
 check "$base/jobs.html" "driverleadform.js"
 # Brand foundations (DESIGN.md): vendored tokens and self-hosted font, no Google Fonts.
@@ -70,7 +69,7 @@ for w in 400 500 600 700; do
   asset "$base/brand/fonts/plus-jakarta-sans-latin-$w-normal.woff2" "font/woff2"
 done
 check "$base/css/style.css" "var(--ol-font-sans)" "fonts.googleapis.com"
-for page in / /jobs.html /carriers/ /jobs/ /jobs/cdl-a-dedicated-regional-atlanta/; do
+for page in / /jobs.html /carriers/ /jobs/cdl-a-dedicated-regional-atlanta/; do
   check "$base$page" "brand/tokens.css"
 done
 intake_preflight
@@ -81,8 +80,8 @@ if [[ "$base" == "https://oberonlogistics.com" ]]; then
 fi
 
 check "$base/jobs.html" "./jobs/cdl-a-dedicated-regional-atlanta/"
-check "$base/jobs/" "Open Positions | Oberon Logistics"
-redirect "$base/jobs" "$base/jobs/"
+redirect "$base/jobs" "$base/jobs.html"
+redirect "$base/jobs/" "$base/jobs.html"
 check "$base/jobs/cdl-a-dedicated-regional-atlanta/" "CDL-A Company Driver: Dedicated Regional out of Atlanta"
 check "$base/jobs/cdl-a-dedicated-regional-atlanta/" "driverleadform.js"
 check "$base/jobs/cdl-a-dedicated-regional-atlanta/" 'id="apply"' "Apply on this page"
